@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html ng-app='myApp' ng-controller='UserController as uc'>
+    <head>
+        <title>Start Page</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+        <link href="css/style.css" rel="stylesheet" type="text/css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.min.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular-route.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    </head>
+    <body>
+        <!--Does my angular work: {{uc.greeting}} <br>-->
+        <!--Users: {{uc.users}} <br> <br>-->
+
+        <div class="container">
+        <h1>Hello, please try out my routing example!</h1> <br> <br>
+            <div ng-view="">
+
+            </div>
+
+<!--            <table class="table">
+                <thead class="thead">
+                    <tr class="headtr">
+                        <td class="tabletd">About me</td>
+                        <td class="tabletd">Image</td>
+                    </tr>
+                </thead>
+                <tbody class="tbody" id="person-tbody">
+                <td>
+                    <div>
+                        <span class="label label-default">Gender</span> &nbsp; {{uc.currentUser.gender}} <br>
+                        <span class="label label-default">First Name</span> &nbsp;{{uc.currentUser.first}} <br>
+                        <span class="label label-default">Last Name</span> &nbsp; {uc.currentUser.last}} <br>
+                        <hr>
+                    </div>
+                    <div>
+                        <span class="label label-default">Street</span> &nbsp;{{uc.currentUser.street}} <br>
+                        <span class="label label-default">City</span> &nbsp;uc.currentUser.city}} <br>
+                        <span class="label label-default">ZIP</span> &nbsp;{{uc.currentUser.zip}} <br> 
+                        <hr>
+                    </div>
+                    <div>
+                        <span class="label label-default">Phone</span> &nbsp;{{uc.currentUser.phone}} <br>
+                        <span class="label label-default">Cell</span> &nbsp;{{uc.currentUser.cell}} <br> 
+                        <span class="label label-default">Email</span> &nbsp;{{uc.currentUser.email}}<br> 
+                    </div>
+                </td>
+                <td>
+                    <img ng-src="{{uc.currentUser.picture.large}}">
+                </td>
+                </tbody>
+                
+                <a href="#/">Back</a>
+
+<!--                <table class="table"> <thead class="thead"> 
+                        <tr class="headtr"> 
+                            <td class="tabletd">Image</td> 
+                            <td class="tabletd">First Name</td> 
+                            <td class="tabletd">Infomation</td> 
+                        </tr> 
+                    </thead> 
+                    <tbody class="tbody" id="person-tbody" ng-repeat="user in uc.users"> 
+                    <td><img ng-src="{{user.picture.thumbnail}}"></td> 
+                    <td ng-bind="user.first"></td> 
+                    <td><a ng-click="uc.details(user)" href="#/details">Details</a></td> 
+                    </tbody> 
+                </table>-->
+
+
+        </div>
+
+        <script>
+                    var app = angular.module('myApp', ['ngRoute']);
+                    var users = [];
+                    app.config(['$routeProvider', function ($routeProvider) {
+                            $routeProvider
+                                    .when('/', {
+                                        template: '<table class="table"> <thead class="thead"> <tr class="headtr"> <td class="tabletd">Image</td> <td class="tabletd">First Name</td> <td class="tabletd">Infomation</td> </tr> </thead> <tbody class="tbody" id="person-tbody" ng-repeat="user in uc.users"> <td><img ng-src="{{user.picture.thumbnail}}"></td> <td ng-bind="user.first"></td> <td><a ng-click="uc.details(user)" href="#/details">Details</a></td> </tbody> </table>'
+                                    })
+                                    .when('/details', {
+                                        template: '<table class="table"> <thead class="thead"> <tr class="headtr"> <td class="tabletd">About me</td> <td class="tabletd">Image</td> </tr> </thead> <tbody class="tbody" id="person-tbody"> <td> <div> <span class="label label-default">Gender</span> &nbsp; {{uc.currentUser.gender}} <br> <span class="label label-default">First Name</span> &nbsp;{{uc.currentUser.first}} <br> <span class="label label-default">Last Name</span> &nbsp; {{uc.currentUser.last}} <br> <hr> </div> <div> <span class="label label-default">Street</span> &nbsp;{{uc.currentUser.street}} <br> <span class="label label-default">City</span> &nbsp;{{uc.currentUser.city}} <br> <span class="label label-default">ZIP</span> &nbsp;{{uc.currentUser.zip}} <br> <hr> </div> <div> <span class="label label-default">Phone</span> &nbsp;{{uc.currentUser.phone}} <br> <span class="label label-default">Cell</span> &nbsp;{{uc.currentUser.cell}} <br> <span class="label label-default">Email</span> &nbsp;{{uc.currentUser.email}}<br> </div> </td> <td> <img ng-src="{{uc.currentUser.picture.large}}"> </td> </tbody> <a href="#/">Back</a>'
+                                    })
+                                    .otherwise({redirectTo: '/'});
+                        }]);
+
+                    app.controller("UserController", function ($http, $routeParams) {
+                        var self = this;
+                        self.greeting = "We have access to my controller";
+                        self.details = function(user) {
+                            self.currentUser = user;
+                            console.log(user);
+                        };
+                        if (users.length === 0) {
+                            $http.get("data/data.json").success(function (data) {
+                                users = data.users;
+                                self.users = users;
+                            });
+                        } else { //We used the cache property on the http request instead
+                            self.users = users;
+                        }
+                        if (users !== null) {
+                            console.log("Adding user: " + $routeParams.id);
+                            self.user = users[$routeParams.id];
+                        }
+
+                    });
+
+        </script>
+    </body>
+</html>
